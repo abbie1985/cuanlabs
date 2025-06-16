@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUANLABS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: '#06b6d4', // cyan-600
+                hover: '#0891b2', // cyan-700
+                dark: '#155e75' // cyan-800
+              },
+              secondary: {
+                DEFAULT: '#6366f1', // indigo-500
+                hover: '#4f46e5' // indigo-600
+              },
+              accent: {
+                DEFAULT: '#10b981', // emerald-500
+                hover: '#059669' // emerald-600
+              },
+              light: '#f0f9ff', // sky-50
+              darktext: '#1f2937', // gray-800
+            }
+          }
+        }
+      }
+    </script>
+<script>
+      // --- BEGIN FALLBACK ENVIRONMENT VARIABLE SETUP ---
+      // This script provides fallback values for environment variables.
+      // It's intended for scenarios where the app is run as static HTML without a build process
+      // that would normally inject these variables (e.g., from .env files via Vite/Next.js).
+      // This script MUST run before the main application script (`index.tsx`).
+
+      console.log("Setting up fallback environment variables...");
+
+      // --- Gemini API Key ---
+      // Attempt to use `process.env.API_KEY` or fallback to `window.process.env.API_KEY`.
+      // The `window.process` object is polyfilled here if it doesn't exist.
+      window.process = window.process || { env: {} };
+      if (!window.process.env.API_KEY) {
+        window.process.env.API_KEY = 'AIzaSyBfz9XJxktHUbLYaIeoJdCT-_ZszMKXSQU'; // User-provided Gemini API Key
+        console.log('Fallback: window.process.env.API_KEY has been set.');
+      } else {
+        console.log('Info: process.env.API_KEY was already defined (either natively or by a previous script).');
+      }
+
+      // --- Supabase Credentials ---
+      // Attempt to use `import.meta.env` (standard for build tools) or fallback to `window.SUBASE_ENV_FALLBACK`.
+      // The `window.SUBASE_ENV_FALLBACK` object is created here if it doesn't exist.
+      window.SUBASE_ENV_FALLBACK = window.SUBASE_ENV_FALLBACK || {};
+      
+      if (!window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_URL) {
+        window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_URL = 'https://hpxhcizhohqskofibyjf.supabase.co'; // User-provided Supabase URL
+        console.log('Fallback: window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_URL has been set.');
+      } else {
+        console.log('Info: window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_URL was already defined.');
+      }
+
+      if (!window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhweGhjaXpob2hxc2tvZmlieWpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwNTEzNDksImV4cCI6MjA2NTYyNzM0OX0.1tqXwzy1q7FewUd05pUvQtSSn1Hw3oPGDtv3FJZbuww'; // User-provided Supabase Anon Key
+        console.log('Fallback: window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_ANON_KEY has been set.');
+      } else {
+        console.log('Info: window.SUBASE_ENV_FALLBACK.NEXT_PUBLIC_SUPABASE_ANON_KEY was already defined.');
+      }
+      console.log("Fallback environment variable setup complete.");
+      // --- END FALLBACK ENVIRONMENT VARIABLE SETUP ---
+</script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.2",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.44.4",
+    "@google/genai": "https://esm.sh/@google/genai",
+    "@/": "./"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-light text-darktext antialiased">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script> {/* Changed from /index.tsx to ./index.tsx */}
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
