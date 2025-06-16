@@ -1,15 +1,14 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { ROUTE_PATHS } from '../constants';
+import { useAuth } from '../context/AuthContext.tsx';
+import { ROUTE_PATHS } from '../constants.ts';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const { login } = useAuth();
+  const [pageLoading, setPageLoading] = useState<boolean>(false); // Local loading for form submission
+  const { login, signInWithGoogle, loading: authLoading } = useAuth(); // Use authLoading for global state
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || ROUTE_PATHS.DASHBOARD;
@@ -17,38 +16,32 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setPageLoading(true);
 
     if (!email || !password) {
       setError('Email dan password harus diisi.');
-      setLoading(false);
+      setPageLoading(false);
       return;
     }
 
-    try {
-      const success = await login(email, password);
-      if (success) {
-        navigate(from, { replace: true });
-      } else {
-        setError('Email atau password salah. Silakan coba lagi.');
-      }
-    } catch (err) {
-      setError('Terjadi kesalahan saat login. Silakan coba beberapa saat lagi.');
-      console.error(err);
-    } finally {
-      setLoading(false);
+    const { success, error: loginError } = await login(email, password);
+    if (success) {
+      navigate(from, { replace: true });
+    } else {
+      setError(loginError || 'Email atau password salah. Silakan coba lagi.');
     }
+    setPageLoading(false);
   };
 
-  // Dummy Google Sign-In
-  const handleGoogleSignIn = () => {
-    alert("Simulasi Google Sign-In. Fitur ini akan diimplementasikan nanti.");
-    // In real app, this would trigger Google OAuth flow
-    // For now, let's simulate a successful login with a predefined Google user
-    login('user@example.com', 'password123').then(success => {
-      if (success) navigate(from, { replace: true });
-    });
+  const handleGoogleSignIn = async () => {
+    setError('');
+    // Auth loading state is handled globally by AuthContext
+    // No need for setPageLoading(true) here as onAuthStateChange will manage UI updates
+    await signInWithGoogle();
+    // Navigation will be handled by onAuthStateChange listener effect in AuthContext or ProtectedRoute
   };
+
+  const isLoading = pageLoading || authLoading;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary py-12 px-4 sm:px-6 lg:px-8">
@@ -75,10 +68,11 @@ const Login: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm bg-white"
                 placeholder="Alamat Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -89,10 +83,11 @@ const Login: React.FC = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm bg-white"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -108,10 +103,10 @@ const Login: React.FC = () => {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark disabled:bg-gray-400"
             >
-              {loading ? (
+              {isLoading && !authLoading ? ( // Show spinner only for local form loading
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               ) : (
                 'Login'
@@ -132,13 +127,20 @@ const Login: React.FC = () => {
             <button
               onClick={handleGoogleSignIn}
               type="button"
-              className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+              disabled={isLoading}
+              className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:bg-gray-200"
             >
               <i className="fab fa-google text-red-500 mr-2 self-center"></i>
               Sign in dengan Google
             </button>
           </div>
         </div>
+         {authLoading && (
+            <div className="mt-4 text-center text-sm text-gray-600">
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-primary mr-2"></div>
+                Memproses autentikasi...
+            </div>
+        )}
       </div>
     </div>
   );

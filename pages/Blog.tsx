@@ -5,26 +5,35 @@ import { BlogPost } from '../types';
 import { fetchBlogPosts } from '../services/api';
 import { ROUTE_PATHS } from '../constants'; // Added import
 
-const BlogCard: React.FC<{ post: BlogPost }> = ({ post }) => (
-  <article className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:shadow-xl transition-shadow duration-300">
-    <Link to={`/blog/${post.slug}`} className="block">
-      <img src={post.imageUrl} alt={post.title} className="w-full h-56 object-cover" />
-    </Link>
-    <div className="p-6">
-      <p className="text-sm text-gray-500 mb-1">{new Date(post.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })} - By {post.author}</p>
-      <Link to={`/blog/${post.slug}`}>
-        <h2 className="text-2xl font-semibold mb-2 text-darktext hover:text-primary transition-colors">{post.title}</h2>
+const BlogCard: React.FC<{ post: BlogPost }> = ({ post }) => {
+  const displayDateString = post.published_at || post.created_at;
+  const authorDisplay = post.author_name || 'CUANLABS Team';
+
+  return (
+    <article className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:shadow-xl transition-shadow duration-300">
+      <Link to={`/blog/${post.slug}`} className="block">
+        <img src={post.image_url || 'https://via.placeholder.com/400x200?text=No+Image'} alt={post.title} className="w-full h-56 object-cover" />
       </Link>
-      <p className="text-gray-700 mb-4 text-sm leading-relaxed h-20 overflow-hidden">{post.summary}</p>
-      <Link 
-        to={`/blog/${post.slug}`} 
-        className="inline-block font-medium text-primary hover:text-primary-hover transition-colors"
-      >
-        Baca Selengkapnya <i className="fas fa-arrow-right ml-1"></i>
-      </Link>
-    </div>
-  </article>
-);
+      <div className="p-6">
+        <p className="text-sm text-gray-500 mb-1">
+          {displayDateString ? new Date(displayDateString).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Date not available'}
+          {' - By '}
+          {authorDisplay}
+        </p>
+        <Link to={`/blog/${post.slug}`}>
+          <h2 className="text-2xl font-semibold mb-2 text-darktext hover:text-primary transition-colors">{post.title}</h2>
+        </Link>
+        <p className="text-gray-700 mb-4 text-sm leading-relaxed h-20 overflow-hidden">{post.summary}</p>
+        <Link 
+          to={`/blog/${post.slug}`} 
+          className="inline-block font-medium text-primary hover:text-primary-hover transition-colors"
+        >
+          Baca Selengkapnya <i className="fas fa-arrow-right ml-1"></i>
+        </Link>
+      </div>
+    </article>
+  );
+};
 
 
 // Placeholder for Single Blog Post Page (not fully implemented in this scope, but shows structure)
@@ -55,9 +64,10 @@ const Blog: React.FC = () => {
         setError(null);
         const fetchedPosts = await fetchBlogPosts();
         setPosts(fetchedPosts);
-      } catch (err) {
-        setError('Gagal memuat artikel blog. Silakan coba lagi nanti.');
-        console.error(err);
+      } catch (err: any) {
+        const errorMessage = err.message || 'Gagal memuat artikel blog. Silakan coba lagi nanti.';
+        setError(errorMessage);
+        console.error('Fetch blog posts error details:', err);
       } finally {
         setLoading(false);
       }
@@ -70,7 +80,7 @@ const Blog: React.FC = () => {
   }
 
   if (error) {
-    return <div className="container mx-auto px-6 py-8 text-center text-red-500">{error}</div>;
+    return <div className="container mx-auto px-6 py-8 text-center text-red-500 bg-red-100 p-4 rounded-md">{error}</div>;
   }
 
   return (

@@ -1,5 +1,6 @@
 {
   "name": "CUANLABS - Digital Profit Platform",
-  "description": "CUANLABS is a comprehensive platform for individuals looking to learn and leverage digital tools to generate income online. It features a marketplace for digital products, interactive profit calculators, membership tiers, and more.",
-  "requestFramePermissions": []
+  "description": "CUANLABS is a comprehensive platform for individuals looking to learn and leverage digital tools to generate income online. It features a marketplace for digital products, interactive profit calculators, membership tiers, an AI Cuan Assistant, and more.",
+  "requestFramePermissions": [],
+  "prompt": ""
 }

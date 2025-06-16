@@ -25,9 +25,10 @@ const Affiliate: React.FC = () => {
         try {
           const data = await fetchAffiliateData(currentUser);
           setAffiliateData(data);
-        } catch (err) {
-          console.error("Error fetching affiliate data:", err);
-          setError("Gagal memuat data afiliasi.");
+        } catch (err: any) {
+          const errorMessage = err.message || "Gagal memuat data afiliasi.";
+          console.error("Error fetching affiliate data:", errorMessage, err);
+          setError(errorMessage);
         } finally {
           setLoading(false);
         }
@@ -55,7 +56,7 @@ const Affiliate: React.FC = () => {
   }
 
   if (error) {
-    return <div className="container mx-auto px-6 py-8 text-center text-red-500">{error}</div>;
+    return <div className="container mx-auto px-6 py-8 text-center text-red-500 bg-red-100 p-4 rounded-md">{error}</div>;
   }
   
   if (!currentUser || !affiliateData) {

@@ -43,8 +43,8 @@ const Home: React.FC = () => {
             />
             <StatCard 
               icon="fas fa-calculator" 
-              title="Kalkulator Cuan Interaktif" 
-              description="Hitung potensi keuntungan investasi dan proyek Anda dengan mudah dan cepat."
+              title="Kalkulator Bisnis Online" 
+              description="Hitung harga jual, BEP, simulasi profit, dan komisi dengan kalkulator canggih kami."
             />
             <StatCard 
               icon="fas fa-users" 
@@ -57,8 +57,10 @@ const Home: React.FC = () => {
 
       {/* Calculator Section */}
       <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <KalkulatorCuan />
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6"> {/* Adjusted padding for calculator */}
+          <div className="max-w-3xl mx-auto"> {/* Wider container for calculator */}
+            <KalkulatorCuan />
+          </div>
         </div>
       </section>
 
